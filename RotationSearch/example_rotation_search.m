@@ -13,7 +13,7 @@ cvxpath     = '../../cvx';
 mosekpath   = '../../mosek';
 utilspath   = '../utils';
 manoptpath  = '../manopt';
-sdpnalpath  = 'C:\Users\PC\Code\SDPNAL+v1.0';
+sdpnalpath  = '/home/ivo/SDPNAL+v1.0';
 stridepath  = '../STRIDE';
 addpath(genpath(pwd))
 addpath(genpath(cvxpath))

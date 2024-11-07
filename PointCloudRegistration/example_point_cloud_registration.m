@@ -29,8 +29,8 @@ end
 spotpath    = '../spotless';
 stridepath  = '../STRIDE';
 manoptpath  = '../manopt';
-mosekpath   = 'C:\Program Files\Mosek\10.2\toolbox\r2017a';
-sdpnalpath  = 'C:\Users\PC\Code\SDPNAL+v1.0';
+mosekpath   = '/home/ivo/mosek';
+sdpnalpath  = '/home/ivo/SDPNAL+v1.0';
 addpath('../utils')
 addpath('./solvers')
 
