@@ -56,3 +56,6 @@ problem.noiseBound  = sqrt(problem.noiseBoundSq);
 fprintf('N: %d, outlierRatio: %g, translationBound: %g, noiseBoundSq: %g, noiseBound: %g.\n',...
     N,outlierRatio,translationBound,noiseBoundSq,problem.noiseBound);
 end
+
+
+

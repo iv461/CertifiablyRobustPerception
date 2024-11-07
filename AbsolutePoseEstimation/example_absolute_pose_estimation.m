@@ -100,4 +100,5 @@ if rungnc
     infostride.totaltime    = infostride.totaltime + gnc.time;
     infostride.time         = [infostride.time, gnc.time];
 end
+printf("-")
 fprintf('\n\n\n\n\n')
