@@ -23,8 +23,8 @@ function problem = load_registration_from_HDF5(filename)
     problem.translationBound  = h5read(filename, "/params/data_scale"); 
 end
 
-function infostride = eval_on_hdf5(N, outlier_rate, i, adversarial_suboptimality)
-    filename = sprintf("synthetic_data_N=%d_adversarial_suboptimality=%.1f_outlier_rate=%.1f_eps=1.0_i=%d.h5", N, adversarial_suboptimality, outlier_rate, i)
+function infostride = eval_on_hdf5(N, outlier_rate, i, adversarial_suboptimality, eps_b)
+    filename = sprintf("synthetic_data_N=%d_adversarial_suboptimality=%.1f_outlier_rate=%.1f_eps=%.1f_i=%d.h5", N, adversarial_suboptimality, outlier_rate, eps_b, i)
     hdf5_data_path = "/home/ivo/dev/certifiable_registration/test_data/"
     filename = hdf5_data_path + filename
     disp(filename)
@@ -130,10 +130,10 @@ function evaluate_and_save_result_table(i)
     %N_values = [10, 20, 30];  % Example values for N
     N_values = [20];  % Example values for N
     %outlier_rate_values = [0.0, 0.1];  % Example values for outlier_rate
-    outlier_rate_values = [0.1];  % Example values for outlier_rate
+    outlier_rate_values = [0., 0.3];  % Example values for outlier_rate
     %instances = [0, 1, 2] % only three trials, the solver is very slow :(
     adversarial_suboptimalities = [0.] 
-    instances = [0] % only three trials, the solver is very slow :(
+    instances = [0,1,2] % only three trials, the solver is very slow :(
     % Initialize an empty table to store results
     resultsTable = table();
     % Loop through each combination of evaluation parameters
@@ -146,15 +146,15 @@ function evaluate_and_save_result_table(i)
                     outlier_rate = outlier_rate_values(j);
                     instance_i = instances(k)
                     adversarial_suboptimality=adversarial_suboptimalities(l)
-                
-                    infostride = eval_on_hdf5(N, outlier_rate, instance_i, adversarial_suboptimality)
+                    eps_bound = .5
+                    infostride = eval_on_hdf5(N, outlier_rate, instance_i, adversarial_suboptimality, eps_bound)
                     excution_time_ms = infostride.totaltime * 1000.
                     residual_angle_deg = infostride.R_err
                     residual_translation = infostride.t_err
                     num_iterations = 1
                     eta_suboptimality = infostride.Rs % It's called eta in get_performance_pcr
                     method = "STRIDE"
-                                    
+                    
                     % Append a new row to the table with the parameters and result
                     resultsTable = [resultsTable; table(N, outlier_rate, excution_time_ms, residual_angle_deg, residual_translation, num_iterations, eta_suboptimality, method)];
                 end
