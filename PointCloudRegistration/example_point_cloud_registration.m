@@ -121,11 +121,10 @@ function infostride = eval_on_hdf5(N, outlier_rate, i, adversarial_suboptimality
         infostride.gnc = gnc; 
         infostride.totaltime = infostride.totaltime + gnc.time;
         %infostride.time = [infostride.time, gnc.time];
-    
+    end
 
     fprintf('\n\n\n\n\n')
 end 
-%filename = "synthetic_data_N=20_adversarial_suboptimality=0.0_outlier_rate=0.1_eps=1.0_i=3.h5";
 
 function evaluate_and_save_result_table(i)
     %N_values = [10, 20, 30];  % Example values for N
@@ -137,7 +136,7 @@ function evaluate_and_save_result_table(i)
     instances = [0] % only three trials, the solver is very slow :(
     % Initialize an empty table to store results
     resultsTable = table();
-    % Loop through each combination of N and outlier_rate
+    % Loop through each combination of evaluation parameters
     for i = 1:length(N_values)
         for j = 1:length(outlier_rate_values)
             for k = 1:length(instances)
@@ -149,14 +148,15 @@ function evaluate_and_save_result_table(i)
                     adversarial_suboptimality=adversarial_suboptimalities(l)
                 
                     infostride = eval_on_hdf5(N, outlier_rate, instance_i, adversarial_suboptimality)
-                    execution_time = infostride.totaltime
+                    excution_time_ms = infostride.totaltime * 1000.
                     residual_angle_deg = infostride.R_err
                     residual_translation = infostride.t_err
                     num_iterations = 1
-                    eta_suboptimality = info.Rs % It's called eta in get_performance_pcr
+                    eta_suboptimality = infostride.Rs % It's called eta in get_performance_pcr
+                    method = "STRIDE"
                                     
                     % Append a new row to the table with the parameters and result
-                    resultsTable = [resultsTable; table(N, outlier_rate, execution_time, residual_angle_deg, residual_translation, num_iterations, eta_suboptimality)];
+                    resultsTable = [resultsTable; table(N, outlier_rate, excution_time_ms, residual_angle_deg, residual_translation, num_iterations, eta_suboptimality, method)];
                 end
             end
         end
