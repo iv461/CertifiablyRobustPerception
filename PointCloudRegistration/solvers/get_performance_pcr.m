@@ -71,7 +71,7 @@ info.t_est  = t_est;
 fprintf('\n=========== Point Cloud Registration Performance ===============\n')
 fprintf('Rp: %3.2e, Rd: %3.2e, Rg: %3.2e, Rs: %3.2e.\n',Rp,Rd,gap,eta);
 fprintf('f_est: %3.4e, f_lb: %3.4e, pobj: %3.4e, dobj: %3.4e.\n',f_est,f_lb,pobj,dobj);
-fprintf('R_err: %3.4e, t_err: %3.4e.\n',R_err,t_err);
+fprintf('R_err (degrees): %3.4e, t_err: %3.4e.\n',R_err,t_err);
 fprintf('================================================================\n')
 
 if iscell(path)

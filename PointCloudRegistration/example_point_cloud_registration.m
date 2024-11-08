@@ -3,13 +3,13 @@
 
 clc; clear; close all; restoredefaultpath
 
-filename = "synthetic_data_N=20_adversarial_suboptimality=0.97_outlier_rate=0.5_eps=0.1_i=0.h5";
+%filename = "synthetic_data_N=20_adversarial_suboptimality=0.97_outlier_rate=0.5_eps=0.1_i=0.h5";
 function problem = load_registration_from_HDF5(filename)
     %% Loads a problem from hdf5 file 
     problem.cloudA = h5read(filename, "/P")';
     problem.cloudB = h5read(filename, "/Q")';
     problem.N = size(problem.cloudA, 2);
-    problem.R_gt = h5read(filename, "/R_gt");
+    problem.R_gt = h5read(filename, "/R_gt")'; % Transpose the rotation (invert it) since apparently the conventions are not the same
     problem.t_gt= h5read(filename, "/t_gt");
     % add data to the problem structure
     problem.type        = 'point cloud registration';
@@ -19,11 +19,11 @@ function problem = load_registration_from_HDF5(filename)
     % note that the noiseBoundSq is important to ensure tight relaxation and
     % good numerical performance of the solvers. If noiseBound is too small,
     % typically the SDP solvers will perform worse (especially SDPNAL+)
-    problem.noiseBound  = h5read(filename, "/eps");
+    problem.noiseBound  = h5read(filename, "/params/eps");
     problem.noiseBoundSq = problem.noiseBound * problem.noiseBound;
-    problem.translationBound  = 1.; 
+    problem.translationBound  = h5read(filename, "/params/data_scale"); 
 end
-%pause;
+
 
 %% paths to dependencies
 spotpath    = '../spotless';
@@ -38,7 +38,6 @@ addpath('./solvers')
 rungnc      = true;
 
 
-
 %% generate random point cloud registration problem
 problem.N                = 50;
 problem.outlierRatio     = 0.5;
@@ -47,6 +46,8 @@ problem.translationBound = 10.0;
 problem                  = gen_point_cloud_registration(problem);
 
 problem = load_registration_from_HDF5(filename);
+%printf(problem)
+%pause;
 
 %% generate SDP relaxation
 addpath(genpath(spotpath))
