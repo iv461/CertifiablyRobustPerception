@@ -1,4 +1,4 @@
-%% Example: Random Point Cloud Registration problem and its semidefinite relaxations
+%% Evaluate STRIDE by loading problem instances from HDF5 and write data to csv.
 %% Heng Yang, June 29, 2021
 
 clc; clear; close all; restoredefaultpath
@@ -43,12 +43,7 @@ function infostride = eval_on_hdf5(N, outlier_rate, i, adversarial_suboptimality
     %% generate random point cloud registration problem
     problem.N                = N;
     problem.outlierRatio     = outlier_rate;
-    %problem.noiseSigma       = 0.01;
-    %problem.translationBound = 10.0;
-    %problem                  = gen_point_cloud_registration(problem);
     problem = load_registration_from_HDF5(filename);
-    %printf(problem)
-    %pause;
 
     %% generate SDP relaxation
     addpath(genpath(spotpath))
@@ -127,15 +122,15 @@ function infostride = eval_on_hdf5(N, outlier_rate, i, adversarial_suboptimality
 end 
 
 function evaluate_and_save_result_table(i)
-    %N_values = [10, 20, 30];  % Example values for N
-    N_values = [20];  % Example values for N
-    %outlier_rate_values = [0.0, 0.1];  % Example values for outlier_rate
-    outlier_rate_values = [0., 0.3];  % Example values for outlier_rate
-    %instances = [0, 1, 2] % only three trials, the solver is very slow :(
+    N_values = [30]
+    outlier_rate_values = [0., 0.3, .6, .8, .9]; 
     adversarial_suboptimalities = [0.] 
-    instances = [0,1,2] % only three trials, the solver is very slow :(
+    instances = [0,1,2] 
     % Initialize an empty table to store results
     resultsTable = table();
+    timestamp = datetime('now', 'Format', 'yyyy-MM-dd_HH-mm-ss');
+    timestamp_str = string(timestamp);
+    filename = "STRIDE_evaluation_results_" + timestamp_str + ".csv";
     % Loop through each combination of evaluation parameters
     for i = 1:length(N_values)
         for j = 1:length(outlier_rate_values)
@@ -157,6 +152,9 @@ function evaluate_and_save_result_table(i)
                     
                     % Append a new row to the table with the parameters and result
                     resultsTable = [resultsTable; table(N, outlier_rate, excution_time_ms, residual_angle_deg, residual_translation, num_iterations, eta_suboptimality, method)];
+                    % Save regularly since this is a long-running-task
+                    writetable(resultsTable, filename);
+                    disp("Results saved to file: " + filename);
                 end
             end
         end
@@ -164,12 +162,6 @@ function evaluate_and_save_result_table(i)
 
     % Display the table
     disp(resultsTable);
-
-    timestamp = datetime('now', 'Format', 'yyyy-MM-dd_HH-mm-ss');
-    timestamp_str = string(timestamp);
-    filename = "STRIDE_evaluation_results_" + timestamp_str + ".csv";
-    writetable(resultsTable, filename);
-    disp("Results saved to file: " + filename);
 end
 
 evaluate_and_save_result_table()
