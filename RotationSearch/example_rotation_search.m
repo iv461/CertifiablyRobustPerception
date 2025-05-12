@@ -153,6 +153,7 @@ function infostride = eval_on_hdf5(N, outlier_rate, i, adversarial_suboptimality
     addpath(genpath(stridepath));
     [outPGD,Xopt,yopt,Sopt] = PGDSDP(SDP.blk, SDP.At, SDP.b, SDP.C, X0, options);
     infostride              = get_performance_quasar(Xopt,yopt,Sopt,SDP,R_gt);
+    infostride.totaltime    = outPGD.totaltime %+ time_dualInit;
 end
 
 
@@ -181,7 +182,7 @@ function evaluate_and_save_result_table(i)
                     infostride = eval_on_hdf5(N, outlier_rate, instance_i, adversarial_suboptimality, eps_bound)
                     excution_time_ms = infostride.totaltime * 1000.
                     residual_angle_deg = infostride.R_err
-                    residual_translation = infostride.t_err
+                    residual_translation = 0 
                     num_iterations = 1
                     eta_suboptimality = infostride.Rs % It's called eta in get_performance_pcr
                     method = "STRIDE"
